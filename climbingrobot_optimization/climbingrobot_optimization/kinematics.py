@@ -33,7 +33,10 @@ def forward_kin(params, psi, l1, l2, psid=None, l1d=None, l2d=None):
 
     px_l1 = px / l1
     n_pz_l1 = -pz / l1
-    px_l1_sinpsi = px / l1 / np.sin(psi)
+    # px_l1_sinpsi = px / l1 / sin(psi) has a removable singularity at psi = 0.
+    # Since px = l1*sin(psi)*root, this ratio equals `root` exactly for every psi
+    # (including the psi = 0 limit), so use the analytic form to avoid 0/0 -> NaN.
+    px_l1_sinpsi = root
     py2b = py * 2.0 * b
 
     pdx = (l1d * px_l1 + l1 * n_pz_l1 * psid

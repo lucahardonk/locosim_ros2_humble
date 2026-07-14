@@ -46,7 +46,11 @@ def _ca_dynamics(x, Fr_l, Fr_r, Fleg, t, params, extra_force=0.0):
     px, py, pz = _ca_forward_kin(params, psi, l1, l2)
     px_l1 = px / l1
     n_pz_l1 = -pz / l1
-    px_l1_sinpsi = px / l1 / ca.sin(psi)
+    # px_l1_sinpsi = px / l1 / sin(psi) has a removable singularity at psi = 0.
+    # Since px = l1*sin(psi)*root, this ratio equals `root` exactly for every psi
+    # (including the psi = 0 limit), so use the analytic form to avoid 0/0 -> NaN.
+    root = ca.sqrt(1.0 - (b ** 2 + l1 ** 2 - l2 ** 2) ** 2 / (4.0 * b ** 2 * l1 ** 2))
+    px_l1_sinpsi = root
     py2b = py * 2.0 * b
 
     # Build A_dyn / b_dyn with vertcat/horzcat so the expression type

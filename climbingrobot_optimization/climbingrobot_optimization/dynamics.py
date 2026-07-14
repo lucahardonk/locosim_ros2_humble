@@ -52,7 +52,11 @@ def dynamics(t, x, Fr_l, Fr_r, Fleg, params, extra_force=None):
 
     px_l1 = px / l1
     n_pz_l1 = -pz / l1
-    px_l1_sinpsi = px / l1 / np.sin(psi)
+    # px_l1_sinpsi = px / l1 / sin(psi) has a removable singularity at psi = 0.
+    # Since px = l1*sin(psi)*root, this ratio equals `root` exactly for every psi
+    # (including the psi = 0 limit), so use the analytic form to avoid 0/0 -> NaN.
+    root = np.sqrt(1.0 - (b ** 2 + l1 ** 2 - l2 ** 2) ** 2 / (4.0 * b ** 2 * l1 ** 2))
+    px_l1_sinpsi = root
     py2b = py * 2.0 * b
 
     # mass equation and rope constraints (A_dyn * qdd = Ftot/m - b_dyn)

@@ -61,7 +61,12 @@ State dynamics(double t, const State& x, double Fr_l, double Fr_r,
 
     const double px_l1 = px / l1;
     const double n_pz_l1 = -pz / l1;
-    const double px_l1_sinpsi = px / l1 / std::sin(psi);
+    // px_l1_sinpsi = px / l1 / sin(psi) has a removable singularity at psi = 0.
+    // Since px = l1*sin(psi)*root, this ratio equals `root` exactly for every psi
+    // (including the psi = 0 limit), so use the analytic form to avoid 0/0 -> NaN.
+    const double root =
+        std::sqrt(1.0 - std::pow(b * b + l1 * l1 - l2 * l2, 2) / (4.0 * b * b * l1 * l1));
+    const double px_l1_sinpsi = root;
     const double py2b = py * 2.0 * b;
 
     double A[3][3];
