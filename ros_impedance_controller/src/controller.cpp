@@ -100,13 +100,28 @@ controller_interface::CallbackReturn Controller::on_configure(
     joint_i_gain_.resize(n);
     joint_d_gain_.resize(n);
 
+    // Helpers: gazebo_ros2_control (and ros2_control's controller_manager) may
+    // have already declared the controller's parameters from the YAML file, in
+    // which case calling declare_parameter again throws "already declared".
+    // Declare only if missing, then read the value back.
+    auto get_double = [&](const std::string & pname, double def) -> double {
+        if (!node->has_parameter(pname))
+            node->declare_parameter<double>(pname, def);
+        return node->get_parameter(pname).as_double();
+    };
+    auto get_string = [&](const std::string & pname, const std::string & def) -> std::string {
+        if (!node->has_parameter(pname))
+            node->declare_parameter<std::string>(pname, def);
+        return node->get_parameter(pname).as_string();
+    };
+
     for (std::size_t i = 0; i < n; i++)
     {
         const std::string & jn = joint_names_[i];
         // Declare + read per-joint PID gains from parameters
-        joint_p_gain_[i] = node->declare_parameter<double>("gains." + jn + ".p", -1.0);
-        joint_i_gain_[i] = node->declare_parameter<double>("gains." + jn + ".i", -1.0);
-        joint_d_gain_[i] = node->declare_parameter<double>("gains." + jn + ".d", -1.0);
+        joint_p_gain_[i] = get_double("gains." + jn + ".p", -1.0);
+        joint_i_gain_[i] = get_double("gains." + jn + ".i", -1.0);
+        joint_d_gain_[i] = get_double("gains." + jn + ".d", -1.0);
 
         if (joint_p_gain_[i] < 0.0 || joint_i_gain_[i] < 0.0 || joint_d_gain_[i] < 0.0)
         {
@@ -119,9 +134,9 @@ controller_interface::CallbackReturn Controller::on_configure(
         RCLCPP_DEBUG(node->get_logger(), "I value for joint %s is: %f", jn.c_str(), joint_i_gain_[i]);
         RCLCPP_DEBUG(node->get_logger(), "D value for joint %s is: %f", jn.c_str(), joint_d_gain_[i]);
 
-        joint_type_[i] = node->declare_parameter<std::string>("joint_type." + jn, "revolute");
+        joint_type_[i] = get_string("joint_type." + jn, "revolute");
         // startup (home) position
-        des_joint_positions_[i] = node->declare_parameter<double>("home." + jn, 0.0);
+        des_joint_positions_[i] = get_double("home." + jn, 0.0);
 
         if (joint_i_gain_[i] == 0)
         {

@@ -30,7 +30,11 @@
         <namespace>/$(arg robot_name)</namespace>
         <remapping>odom:=ground_truth</remapping>
       </ros>
-      <body_name>trunk</body_name>
+      <!-- NOTE: the fixed 'floating_base' joint lumps 'trunk' into the root
+           'base_link' in Gazebo Classic, so 'trunk' no longer exists as a
+           separate body. base_link is coincident with trunk (origin 0 0 0),
+           so its pose IS the trunk ground-truth pose. -->
+      <body_name>base_link</body_name>
       <frame_name>world</frame_name>
       <xyz_offset>0 0 0</xyz_offset>
       <rpy_offset>0 0 0</rpy_offset>

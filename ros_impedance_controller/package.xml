@@ -31,6 +31,7 @@
   <!-- Runtime -->
   <exec_depend>ros2_control</exec_depend>
   <exec_depend>ros2_controllers</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>gazebo_ros2_control</exec_depend>
 
   <export>
