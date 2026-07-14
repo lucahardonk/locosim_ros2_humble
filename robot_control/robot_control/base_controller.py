@@ -254,6 +254,9 @@ class BaseController(threading.Thread):
 
     # ------------------------------------------------------------------ callbacks
     def _receive_contact_lf(self, msg):
+        # Guard: bumper sensor publishes empty message before contact
+        if not msg.states or not msg.states[0].wrenches:
+            return
         grf = np.zeros(3)
         grf[0] = msg.states[0].wrenches[0].force.x
         grf[1] = msg.states[0].wrenches[0].force.y
@@ -261,6 +264,8 @@ class BaseController(threading.Thread):
         self.u.setLegJointState(self.u.leg_map["LF"], grf, self.grForcesLocal_gt)
 
     def _receive_contact_rf(self, msg):
+        if not msg.states or not msg.states[0].wrenches:
+            return
         grf = np.zeros(3)
         grf[0] = msg.states[0].wrenches[0].force.x
         grf[1] = msg.states[0].wrenches[0].force.y
@@ -268,6 +273,8 @@ class BaseController(threading.Thread):
         self.u.setLegJointState(self.u.leg_map["RF"], grf, self.grForcesLocal_gt)
 
     def _receive_contact_lh(self, msg):
+        if not msg.states or not msg.states[0].wrenches:
+            return
         grf = np.zeros(3)
         grf[0] = msg.states[0].wrenches[0].force.x
         grf[1] = msg.states[0].wrenches[0].force.y
@@ -275,6 +282,8 @@ class BaseController(threading.Thread):
         self.u.setLegJointState(self.u.leg_map["LH"], grf, self.grForcesLocal_gt)
 
     def _receive_contact_rh(self, msg):
+        if not msg.states or not msg.states[0].wrenches:
+            return
         grf = np.zeros(3)
         grf[0] = msg.states[0].wrenches[0].force.x
         grf[1] = msg.states[0].wrenches[0].force.y
