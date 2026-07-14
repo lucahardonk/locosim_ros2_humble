@@ -30,15 +30,18 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 
 # Controller plugin library
-add_library(${PROJECT_NAME} SHARED
+# NOTE: the rosidl_generate_interfaces() call above already creates a target
+# named ${PROJECT_NAME}, so the plugin library MUST use a different target name.
+set(PLUGIN_LIB ${PROJECT_NAME}_plugin)
+add_library(${PLUGIN_LIB} SHARED
   src/controller.cpp
 )
-target_include_directories(${PROJECT_NAME} PUBLIC
+target_include_directories(${PLUGIN_LIB} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   ${EIGEN3_INCLUDE_DIR}
 )
-ament_target_dependencies(${PROJECT_NAME}
+ament_target_dependencies(${PLUGIN_LIB}
   rclcpp
   rclcpp_lifecycle
   controller_interface
@@ -52,7 +55,7 @@ ament_target_dependencies(${PROJECT_NAME}
 # Link against the interfaces generated in THIS package (Humble-compatible)
 rosidl_get_typesupport_target(cpp_typesupport_target
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
-target_link_libraries(${PROJECT_NAME} "${cpp_typesupport_target}")
+target_link_libraries(${PLUGIN_LIB} "${cpp_typesupport_target}")
 
 # Export the controller plugin
 pluginlib_export_plugin_description_file(controller_interface controller_plugin.xml)
@@ -61,7 +64,7 @@ pluginlib_export_plugin_description_file(controller_interface controller_plugin.
 install(DIRECTORY include/
   DESTINATION include
 )
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${PLUGIN_LIB}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -74,7 +77,7 @@ install(DIRECTORY launch config worlds
 )
 
 ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME})
+ament_export_libraries(${PROJECT_NAME}_plugin)
 ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
