@@ -112,11 +112,10 @@ def generate_launch_description():
                    '--controller-manager', '/controller_manager'],
     )
 
-    # 5 - robot_state_publisher (joint states -> TF)
-    robot_state_publisher = Node(
-        package='robot_state_publisher', executable='robot_state_publisher',
-        output='screen', parameters=[{'use_sim_time': True}],
-    )
+    # 5 - robot_state_publisher is started by <robot>_description/upload.launch.py
+    #     (included above as `upload_description`) with the robot_description
+    #     parameter set from xacro. Do NOT start a second one here — it would
+    #     collide on the node name and have an empty robot_description.
 
     # 6 - RViz2
     rviz_node = Node(
@@ -136,7 +135,6 @@ def generate_launch_description():
         upload_description,
         gzserver,
         gzclient,
-        robot_state_publisher,
         spawn_entity,
         delay_jsb,
         delay_ric,

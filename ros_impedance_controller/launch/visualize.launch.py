@@ -5,7 +5,7 @@ import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
@@ -17,7 +17,7 @@ def generate_launch_description():
 
     urdf_path = [os.path.join(locosim_dir, 'robot_urdf', ''), robot_name, '.urdf']
     robot_description = ParameterValue(
-        Command(['xacro ', *urdf_path]), value_type=str)
+        Command([FindExecutable(name='xacro'), ' ', *urdf_path]), value_type=str)
 
     return LaunchDescription([
         DeclareLaunchArgument('robot_name', default_value='ur5'),
