@@ -21,7 +21,7 @@ from termcolor import colored
 
 from ament_index_python.packages import get_package_share_directory
 from std_srvs.srv import Trigger
-from ros_impedance_controller.srv import generic_float
+from ros_impedance_controller.srv import GenericFloat
 
 from robot_control.components.filter import SecondOrderFilter
 
@@ -48,7 +48,7 @@ class GripperManager():
         self.SO_filter = SecondOrderFilter(self.number_of_fingers)
         self.SO_filter.initFilter(self.q_des_gripper, dt)
         if self.node is not None:
-            self.node.create_service(generic_float, 'move_gripper', self.move_gripper_callback)
+            self.node.create_service(GenericFloat, 'move_gripper', self.move_gripper_callback)
 
     def move_gripper_callback(self, req, response=None):
         diameter = req.data

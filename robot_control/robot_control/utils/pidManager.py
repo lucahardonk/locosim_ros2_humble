@@ -4,16 +4,16 @@
 #   * rospy.wait_for_service / rospy.ServiceProxy -> node.create_client + wait_for_service
 #   * service call now uses call_async(); the message payloads and the PID
 #     selection logic (per-robot, per-leg, per-joint) are unchanged.
-#   * The custom interfaces set_pids / pid still come from the
+#   * The custom interfaces SetPids / Pid still come from the
 #     ros_impedance_controller package (built with rosidl_generate_interfaces).
-#     In ROS2 the request wrapper is set_pids.Request (there is no separate
-#     set_pidsRequest type as in ROS1).
+#     In ROS2 the request wrapper is SetPids.Request (there is no separate
+#     SetPidsRequest type as in ROS1).
 import copy
 import numpy as np
 from termcolor import colored
 
-from ros_impedance_controller.srv import set_pids
-from ros_impedance_controller.msg import pid
+from ros_impedance_controller.srv import SetPids
+from ros_impedance_controller.msg import Pid
 
 
 class PidManager:
@@ -22,12 +22,12 @@ class PidManager:
         print("Initializing PID Manager")
         self.node = node
         self.joint_names = jnames
-        self.set_pd_service = self.node.create_client(set_pids, "/set_pids")
+        self.set_pd_service = self.node.create_client(SetPids, "/set_pids")
         if not self.set_pd_service.wait_for_service(timeout_sec=5.0):
             print(colored("PID Manager: Service call /set_pids non available, check ros_impedance_controller node", "red"))
-        self.joint_pid = pid()
-        self.joint_pid_log = len(jnames) * [pid()]
-        self.req_msg = set_pids.Request()
+        self.joint_pid = Pid()
+        self.joint_pid_log = len(jnames) * [Pid()]
+        self.req_msg = SetPids.Request()
         print(colored("PID Manager initialized", "red"))
 
     def getPDs(self):

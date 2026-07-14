@@ -22,10 +22,10 @@ find_package(Eigen3 REQUIRED)
 
 # Generate custom messages and services
 rosidl_generate_interfaces(${PROJECT_NAME}
-  msg/pid.msg
+  msg/Pid.msg
   msg/EffortPid.msg
-  srv/set_pids.srv
-  srv/generic_float.srv
+  srv/SetPids.srv
+  srv/GenericFloat.srv
   DEPENDENCIES std_msgs builtin_interfaces
 )
 
