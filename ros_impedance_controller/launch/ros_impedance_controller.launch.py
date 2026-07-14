@@ -100,7 +100,7 @@ def generate_launch_description():
     # 2 - Start Gazebo Classic (gzserver + gzclient) with ROS2 system plugins
     gzserver = ExecuteProcess(
         cmd=['gzserver', '--verbose', '-s', 'libgazebo_ros_init.so',
-             '-s', 'libgazebo_ros_factory.so', '--pause', world_path],
+             '-s', 'libgazebo_ros_factory.so', world_path],
         output='screen',
     )
     gzclient = ExecuteProcess(
