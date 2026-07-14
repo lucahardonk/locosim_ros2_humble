@@ -59,15 +59,62 @@ def _find_package_path(package_name):
     raise RuntimeError("ament_index_python not available; cannot locate package " + package_name)
 
 
+def _parse_xacro_mappings(additional_args):
+    """Turn a list of 'name:=value' CLI-style tokens into a xacro mappings dict.
+
+    Anything that is not a 'name:=value' pair is ignored (xacro only accepts
+    key/value mappings via its Python API).
+    """
+    mappings = {}
+    if not additional_args:
+        return mappings
+    for arg in additional_args:
+        if arg is None:
+            continue
+        if ':=' in arg:
+            key, _, value = arg.partition(':=')
+            mappings[key.strip()] = value
+    return mappings
+
+
 def _run_xacro(xacro_path, additional_args=None):
-    """Run the ROS2 xacro CLI and return the generated URDF string."""
-    command = ["xacro", xacro_path]
-    if additional_args:
-        command.extend(additional_args)
+    """Generate the URDF string from a xacro file.
+
+    IMPORTANT: this used the ``xacro`` CLI with ``stderr=subprocess.STDOUT``,
+    which MERGED xacro's warnings (e.g. "Child elements of a <xacro:include>
+    tag are ignored") into the returned string. That warning text got written
+    ahead of the ``<?xml ...>`` declaration, so Pinocchio's URDF parser then
+    rejected the file with "Error document empty". We now use the xacro Python
+    API (the same path used by <robot>_description/launch/upload.launch.py) so
+    the returned string is pure URDF. If the Python API is unavailable we fall
+    back to the CLI, but capture stderr SEPARATELY so warnings never corrupt
+    the URDF.
+    """
+    mappings = _parse_xacro_mappings(additional_args)
+
+    # Preferred path: xacro Python API (never mixes warnings into the output).
     try:
-        return subprocess.check_output(command, stderr=subprocess.STDOUT).decode("utf-8")
+        import xacro  # noqa: WPS433 - optional, present when ros-humble-xacro is installed
+        return xacro.process_file(xacro_path, mappings=mappings).toxml()
+    except ImportError:
+        pass  # fall back to the CLI below
+    except Exception as api_error:  # noqa: BLE001 - surface a clear message
+        print(colored('Failed to process xacro (python API):\n%s' % api_error, "red"))
+        sys.exit(1)
+
+    # Fallback: xacro CLI. Keep stderr OUT of stdout so warnings do not corrupt
+    # the URDF (this was the original bug). stderr is captured and only shown
+    # on failure.
+    command = ["xacro", xacro_path]
+    for key, value in mappings.items():
+        command.append('%s:=%s' % (key, value))
+    try:
+        result = subprocess.run(command, check=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        return result.stdout.decode("utf-8")
     except subprocess.CalledProcessError as process_error:
-        print(colored('Failed to run xacro command with error:\n%s' % process_error.output, "red"))
+        print(colored('Failed to run xacro command with error:\n%s'
+                      % process_error.stderr.decode("utf-8"), "red"))
         sys.exit(1)
 
 

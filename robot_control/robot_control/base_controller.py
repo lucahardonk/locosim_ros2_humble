@@ -161,8 +161,11 @@ class BaseController(threading.Thread):
         else:
             os.environ["GAZEBO_MODEL_PATH"] = custom_models_path
 
-        # clean up previous processes
-        os.system("killall rviz2 gzserver gzclient 2>/dev/null")
+        # clean up previous processes. Force-kill (-9) and wait briefly so the
+        # Gazebo master TCP port (11345) is actually released before we relaunch;
+        # otherwise gzserver dies with "bind: Address already in use".
+        os.system("killall -9 rviz2 gzserver gzclient 2>/dev/null")
+        self._sleep(1.0)
 
         cli_args = ["ros2", "launch", "ros_impedance_controller", "ros_impedance_controller.launch.py",
                     'robot_name:=' + self.robot_name,
