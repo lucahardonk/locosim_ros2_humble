@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+  ROS2 note: ros2_control does NOT use <transmission> tags for the Gazebo
+  simulation. The joint command/state interfaces are declared in
+  urdfs/ros2_control.xacro (macro go1_ros2_control) instead. This macro is kept
+  (as a no-op) only so that the existing calls in leg.xacro continue to expand
+  without error. Delete the leg_transmission call from leg.xacro if you prefer.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="leg_transmission" params="name">
+        <!-- intentionally empty: replaced by ros2_control interfaces -->
+    </xacro:macro>
+</robot>

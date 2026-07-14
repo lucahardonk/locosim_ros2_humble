@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+  ros2_control hardware description for the Go1 quadruped (Gazebo Classic).
+
+  Replaces the ROS1 <transmission> blocks. Every actuated joint exposes an
+  "effort" command interface (the ros_impedance_controller writes torques) and
+  position/velocity/effort state interfaces. The gazebo_ros2_control plugin
+  (declared in gazebo.xacro) instantiates this hardware and starts an embedded
+  controller_manager that loads the controllers listed in
+  config/ros_impedance_controller.yaml.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="leg_ros2_control_joints" params="name">
+    <joint name="${name}_haa_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="${name}_hfe_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+    <joint name="${name}_kfe_joint">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="go1_ros2_control">
+    <ros2_control name="GazeboSystem" type="system">
+      <hardware>
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      </hardware>
+      <xacro:leg_ros2_control_joints name="lf"/>
+      <xacro:leg_ros2_control_joints name="rf"/>
+      <xacro:leg_ros2_control_joints name="lh"/>
+      <xacro:leg_ros2_control_joints name="rh"/>
+    </ros2_control>
+  </xacro:macro>
+
+</robot>

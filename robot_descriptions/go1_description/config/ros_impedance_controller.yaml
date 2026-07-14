@@ -1,0 +1,94 @@
+# ros2_control configuration for the Go1 quadruped.
+# Loaded by the gazebo_ros2_control plugin (see gazebo/gazebo.xacro), which
+# starts an embedded controller_manager.
+#
+# ROS1 -> ROS2 mapping:
+#   * The ROS1 rosparam block "ros_impedance_controller: {type:..., joints:...,
+#     gains:...}" is split into the controller_manager section (declares the
+#     controller type + update_rate) and the per-controller ros__parameters
+#     section (joints / gains / home ...).
+#   * joint_state_controller/JointStateController -> joint_state_broadcaster.
+
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Hz (matches ROS1 publish_rate / task_period 0.001)
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    ros_impedance_controller:
+      type: ros_impedance_controller/Controller
+
+joint_state_broadcaster:
+  ros__parameters:
+    publish_rate: 1000
+
+ros_impedance_controller:
+  ros__parameters:
+    robot_name: go1
+    pid_discrete_implementation: false
+    joints:
+      - lf_haa_joint
+      - lf_hfe_joint
+      - lf_kfe_joint
+      - lh_haa_joint
+      - lh_hfe_joint
+      - lh_kfe_joint
+      - rf_haa_joint
+      - rf_hfe_joint
+      - rf_kfe_joint
+      - rh_haa_joint
+      - rh_hfe_joint
+      - rh_kfe_joint
+    gains:
+      lf_haa_joint: {p: 0.0, i: 0.0, d: 0.0}
+      lf_hfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+      lf_kfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+      lh_haa_joint: {p: 0.0, i: 0.0, d: 0.0}
+      lh_hfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+      lh_kfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+      rf_haa_joint: {p: 0.0, i: 0.0, d: 0.0}
+      rf_hfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+      rf_kfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+      rh_haa_joint: {p: 0.0, i: 0.0, d: 0.0}
+      rh_hfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+      rh_kfe_joint: {p: 0.0, i: 0.0, d: 0.0}
+    home:
+      lf_haa_joint:  0.2
+      lf_hfe_joint:  0.78
+      lf_kfe_joint: -1.7
+      lh_haa_joint:  0.2
+      lh_hfe_joint:  0.78
+      lh_kfe_joint: -1.7
+      rf_haa_joint: -0.2
+      rf_hfe_joint:  0.78
+      rf_kfe_joint: -1.7
+      rh_haa_joint: -0.2
+      rh_hfe_joint:  0.78
+      rh_kfe_joint: -1.7
+    standUp:
+      lf_haa_joint:  0.2
+      lf_hfe_joint:  0.78
+      lf_kfe_joint: -1.7
+      lh_haa_joint:  0.2
+      lh_hfe_joint:  0.78
+      lh_kfe_joint: -1.7
+      rf_haa_joint: -0.2
+      rf_hfe_joint:  0.78
+      rf_kfe_joint: -1.7
+      rh_haa_joint: -0.2
+      rh_hfe_joint:  0.78
+      rh_kfe_joint: -1.7
+    standDown:
+      lf_haa_joint:  0.8
+      lf_hfe_joint:  1.7
+      lf_kfe_joint: -2.0
+      lh_haa_joint:  0.8
+      lh_hfe_joint:  1.7
+      lh_kfe_joint: -2.0
+      rf_haa_joint: -0.8
+      rf_hfe_joint:  1.7
+      rf_kfe_joint: -2.0
+      rh_haa_joint: -0.8
+      rh_hfe_joint:  1.7
+      rh_kfe_joint: -2.0

@@ -1,0 +1,10 @@
+<library path="ros_impedance_controller">
+    <class name="ros_impedance_controller/Controller"
+           type="ros_impedance_controller::Controller"
+           base_class_type="controller_interface::ControllerInterface">
+        <description>
+            The ros_impedance_controller: a joint-space PID + feed-forward
+            effort controller for ros2_control.
+        </description>
+    </class>
+</library>

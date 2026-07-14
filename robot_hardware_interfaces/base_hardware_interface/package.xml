@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>base_hardware_interface</name>
+  <version>0.0.1</version>
+  <description>Hardware interface helpers for WoLF (ROS2 Humble port)</description>
+  <maintainer email="gennaro.raiola@gmail.com">Gennaro Raiola</maintainer>
+
+  <license>GNU General Public License v3.0</license>
+
+  <author>Gennaro Raiola</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>hardware_interface</depend>
+  <depend>pluginlib</depend>
+  <depend>urdf</depend>
+  <depend>srdfdom</depend>
+  <depend>eigen</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
