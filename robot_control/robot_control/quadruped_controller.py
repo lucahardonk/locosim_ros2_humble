@@ -90,10 +90,16 @@ class QuadrupedController(BaseController):
     def initSubscribers(self):
         from rclpy.qos import QoSProfile
         qos = QoSProfile(depth=1)
+        # NOTE (ROS1->ROS2 topic mapping): in the ROS1 stack joint_states/effort_pid
+        # were published under the robot namespace (/<robot>/joint_states). In this
+        # ROS2 port the low-level controller_manager (joint_state_broadcaster +
+        # ros_impedance_controller) publishes them at GLOBAL scope (/joint_states,
+        # /effort_pid), so we subscribe globally. The gazebo-plugin topics below
+        # (ground_truth/trunk_imu/foot_bumper) remain under /<robot>/.
         self.sub_jstate = self.node.create_subscription(
-            JointState, "/" + self.robot_name + "/joint_states", self._receive_jstate, qos)
+            JointState, "/joint_states", self._receive_jstate, qos)
         self.sub_pid_effort = self.node.create_subscription(
-            EffortPid, "/" + self.robot_name + "/effort_pid", self._receive_pid_effort, qos)
+            EffortPid, "/effort_pid", self._receive_pid_effort, qos)
 
         if self.real_robot:
             self.sub_imu_lin_acc = self.node.create_subscription(
@@ -919,7 +925,7 @@ class QuadrupedController(BaseController):
                     if alpha < 1:
                         alpha = GCTime/self.gravity_comp_duration
 
-                self.send_command(self.q_des, self.qd_des, alpha*p.wbc.gravityCompensation(p.W_contacts, p.wJ, p.h_joints, p.basePoseW, p.comPoseW))
+                self.send_command(self.q_des, self.qd_des, alpha*self.wbc.gravityCompensation(self.W_contacts, self.wJ, self.h_joints, self.basePoseW, self.comPoseW))
 
             # IMU BIAS ESTIMATION
             if self.real_robot and (self.robot_name == 'go1' or self.robot_name == 'go2' or self.robot_name == 'aliengo'):
@@ -1287,9 +1293,22 @@ class QuadrupedController(BaseController):
 
 
 def main(args=None):
-    p = QuadrupedController('aliengo')
+    # Entry point (ROS2 console_script). Configurable via CLI positionals so the
+    # same executable can drive any robot without editing source:
+    #   ros2 run robot_control quadruped_controller [robot_name] [world_name] [gui]
+    # Defaults target the Go1 (Phase 1) with the GUI on. The controller launches
+    # its own Gazebo (see startSimulator) -- do NOT launch the sim separately.
+    robot_name = 'go1'
     world_name = 'fast.world'
-    use_gui = False
+    use_gui = True
+    argv = sys.argv[1:]
+    if len(argv) >= 1 and argv[0]:
+        robot_name = argv[0]
+    if len(argv) >= 2 and argv[1]:
+        world_name = argv[1]
+    if len(argv) >= 3 and argv[2]:
+        use_gui = argv[2].lower() in ('1', 'true', 'yes', 'gui', 'on')
+    p = QuadrupedController(robot_name)
     try:
         #p.startController(world_name='slow.world')
         p.startController(world_name=world_name,

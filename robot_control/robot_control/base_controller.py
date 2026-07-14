@@ -210,10 +210,13 @@ class BaseController(threading.Thread):
 
     def initSubscribers(self):
         qos = QoSProfile(depth=1)
+        # NOTE (ROS1->ROS2 topic mapping): the ROS2 low-level controller_manager
+        # publishes joint_states/effort_pid at GLOBAL scope (not under /<robot>/),
+        # so subscribe globally. Gazebo-plugin topics below stay under /<robot>/.
         self.sub_jstate = self.node.create_subscription(
-            JointState, "/" + self.robot_name + "/joint_states", self._receive_jstate, qos)
+            JointState, "/joint_states", self._receive_jstate, qos)
         self.sub_pid_effort = self.node.create_subscription(
-            EffortPid, "/" + self.robot_name + "/effort_pid", self._receive_pid_effort, qos)
+            EffortPid, "/effort_pid", self._receive_pid_effort, qos)
         self.sub_pose = self.node.create_subscription(
             Odometry, "/" + self.robot_name + "/ground_truth", self._receive_pose, qos)
 
