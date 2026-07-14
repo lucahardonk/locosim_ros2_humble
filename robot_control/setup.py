@@ -20,9 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            # Robot-specific controller entry points can be registered here as
-            # the corresponding controllers are ported, e.g.:
-            # 'quadruped_controller = robot_control.quadruped_controller:main',
+            'base_controller = robot_control.base_controller:main',
+            'quadruped_controller = robot_control.quadruped_controller:main',
         ],
     },
 )
