@@ -136,7 +136,15 @@ def generate_launch_description():
     #     parameter set from xacro. Do NOT start a second one here — it would
     #     collide on the node name and have an empty robot_description.
 
-    # 6 - RViz2
+    # 6 - Static transform publisher for world frame (required by RViz)
+    #     Gazebo doesn't automatically publish world->base_link, so we add it here.
+    world_to_base_tf = Node(
+        package='tf2_ros', executable='static_transform_publisher',
+        arguments=['0', '0', '0', '0', '0', '0', 'world', 'base_link'],
+        output='screen',
+    )
+
+    # 7 - RViz2
     rviz_node = Node(
         package='rviz2', executable='rviz2', name='rviz2',
         arguments=['-d', LaunchConfiguration('rviz_conf'), '-f', 'world'],
@@ -155,6 +163,7 @@ def generate_launch_description():
         gzserver,
         gzclient,
         spawn_entity,
+        world_to_base_tf,
         delay_jsb,
         delay_ric,
         rviz_node,
