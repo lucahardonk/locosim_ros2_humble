@@ -50,7 +50,7 @@
                     <origin rpy="${PI} ${PI} 0" xyz="0 0 0"/>
                 </xacro:if>
                 <geometry>
-                    <mesh filename="package://go2_description/meshes/hip.dae" scale="1 1 1"/>
+                    <mesh filename="package://go2_description/meshes/hip.stl" scale="1 1 1"/>
                 </geometry>
                 <!-- <material name="orange"/> -->
             </visual>
@@ -85,10 +85,10 @@
                 <origin rpy="0 0 0" xyz="0 0 0"/>
                 <geometry>
                     <xacro:if value="${mirror_dae == True}">
-                        <mesh filename="package://go2_description/meshes/upperleg.dae" scale="1 1 1"/>
+                        <mesh filename="package://go2_description/meshes/upperleg.stl" scale="1 1 1"/>
                     </xacro:if>
                     <xacro:if value="${mirror_dae == False}">
-                        <mesh filename="package://go2_description/meshes/upperleg_mirror.dae" scale="1 1 1"/>
+                        <mesh filename="package://go2_description/meshes/upperleg_mirror.stl" scale="1 1 1"/>
                     </xacro:if>
                 </geometry>
                 <!-- <material name="orange"/> -->
@@ -124,7 +124,7 @@
             <visual>
                 <origin rpy="0 0 0" xyz="0 0 0"/>
                 <geometry>
-                    <mesh filename="package://go2_description/meshes/lowerleg.dae" scale="1 1 1"/>
+                    <mesh filename="package://go2_description/meshes/lowerleg.stl" scale="1 1 1"/>
                 </geometry>
                 <!-- <material name="orange"/> -->
             </visual>
