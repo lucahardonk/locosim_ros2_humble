@@ -62,8 +62,14 @@ def _find_package_path(package_name):
 def _parse_xacro_mappings(additional_args):
     """Turn a list of 'name:=value' CLI-style tokens into a xacro mappings dict.
 
-    Anything that is not a 'name:=value' pair is ignored (xacro only accepts
-    key/value mappings via its Python API).
+    Each element of *additional_args* may be a single ``key:=value`` token **or**
+    a whitespace-separated string containing several such tokens (e.g.
+    ``"anchorX:=0.2 anchorY:=0.0 anchorZ:=20.0"``).  Both forms are accepted so
+    that callers can pass either a list of individual pairs or a single
+    concatenated string (the legacy ROS1 pattern).
+
+    Anything that is not a 'name:=value' pair is silently ignored (xacro only
+    accepts key/value mappings via its Python API).
     """
     mappings = {}
     if not additional_args:
@@ -71,9 +77,13 @@ def _parse_xacro_mappings(additional_args):
     for arg in additional_args:
         if arg is None:
             continue
-        if ':=' in arg:
-            key, _, value = arg.partition(':=')
-            mappings[key.strip()] = value
+        # Split on whitespace so that a single string with multiple
+        # 'key:=value' pairs (e.g. from the old ROS1 calling convention)
+        # is handled correctly.
+        for token in arg.split():
+            if ':=' in token:
+                key, _, value = token.partition(':=')
+                mappings[key.strip()] = value
     return mappings
 
 

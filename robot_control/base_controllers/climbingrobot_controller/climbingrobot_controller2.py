@@ -190,7 +190,10 @@ class ClimbingrobotController(BaseControllerFixed):
 
     def loadModelAndPublishers(self, xacro_path=None):
         xacro_path = get_package_share_directory('climbingrobot_description') + '/urdf/' + self.robot_name + '.xacro'
-        additional_urdf_args = ' anchorX:=' + str(conf.robot_params[self.robot_name]['spawn_x'])
+        # Pass each xacro arg as a separate list element so that
+        # _parse_xacro_mappings splits them correctly (the old concatenated-
+        # string form caused only the first key:=value to be parsed).
+        additional_urdf_args = 'anchorX:=' + str(conf.robot_params[self.robot_name]['spawn_x'])
         additional_urdf_args += ' anchorY:=' + str(conf.robot_params[self.robot_name]['spawn_y'])
         additional_urdf_args += ' anchorZ:=' + str(conf.robot_params[self.robot_name]['spawn_z'])
         additional_urdf_args += ' anchor2X:=' + str(conf.robot_params[self.robot_name]['spawn_2x'])
