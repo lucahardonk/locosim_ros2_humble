@@ -24,11 +24,13 @@ def generate_launch_description():
     srdf_xacro = os.path.join(pkg, 'robots', 'go1.srdf.xacro')
 
     robot_description = ParameterValue(
-        Command(['xacro ', urdf_xacro,
+        Command(['ros2', 'run', 'xacro', 'xacro', ' ', urdf_xacro,
                  ' task_period:=', task_period,
                  ' load_force_sensors:=', load_force_sensors]),
         value_type=str)
-    robot_semantic = ParameterValue(Command(['xacro ', srdf_xacro]), value_type=str)
+    robot_semantic = ParameterValue(
+        Command(['ros2', 'run', 'xacro', 'xacro', ' ', srdf_xacro]),
+        value_type=str)
 
     return LaunchDescription([
         DeclareLaunchArgument('robot_name', default_value='go1'),
