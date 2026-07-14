@@ -20,5 +20,12 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <!-- Let Gazebo Classic resolve package://go1_description/... mesh URIs.
+         gazebo_ros' environment hook prepends this path to GAZEBO_MODEL_PATH
+         when the workspace is sourced. ${prefix} is the install share dir of
+         this package, so ${prefix}/.. is the dir that CONTAINS go1_description,
+         which is what package:// resolution needs. Without this the robot
+         spawns but its mesh visuals are invisible ("empty" Gazebo). -->
+    <gazebo_ros gazebo_model_path="${prefix}/.."/>
   </export>
 </package>

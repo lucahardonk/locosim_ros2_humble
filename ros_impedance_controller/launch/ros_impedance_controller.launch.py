@@ -57,12 +57,29 @@ def generate_launch_description():
         DeclareLaunchArgument('spawn_Y', default_value='0.0'),
     ]
 
+    def _prepend_env(var, path):
+        """Prepend `path` to a ':'-separated environment variable."""
+        cur = os.environ.get(var, '')
+        os.environ[var] = path + (':' + cur if cur else '')
+
     # Make the world models discoverable by Gazebo
-    gazebo_model_path = os.path.join(pkg_ric, 'worlds', 'models')
-    if 'GAZEBO_MODEL_PATH' in os.environ:
-        os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path + ':' + os.environ['GAZEBO_MODEL_PATH']
-    else:
-        os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path
+    _prepend_env('GAZEBO_MODEL_PATH', os.path.join(pkg_ric, 'worlds', 'models'))
+
+    # CRITICAL: let Gazebo Classic resolve `package://<pkg>/...` mesh URIs used
+    # in the robot URDF. Gazebo (unlike RViz) does not know about ROS packages,
+    # so `package://go1_description/meshes/*.dae` fails to load and the robot
+    # spawns invisible ("empty" Gazebo). We add the *parent* of each package's
+    # share dir (i.e. the dir that CONTAINS the package folder) to both
+    # GAZEBO_MODEL_PATH and GAZEBO_RESOURCE_PATH so `package://<pkg>/...`
+    # resolves. This is a belt-and-suspenders complement to the
+    # <gazebo_ros gazebo_model_path="${prefix}/.."/> export in package.xml.
+    for _pkg in ('go1_description', 'ros_impedance_controller'):
+        try:
+            _share_parent = os.path.dirname(get_package_share_directory(_pkg))
+            _prepend_env('GAZEBO_MODEL_PATH', _share_parent)
+            _prepend_env('GAZEBO_RESOURCE_PATH', _share_parent)
+        except Exception:  # noqa: BLE001 - package may not be present
+            pass
 
     # PathJoinSubstitution resolves world_name at runtime — avoids unresolved
     # substitution objects leaking into ExecuteProcess.cmd.
