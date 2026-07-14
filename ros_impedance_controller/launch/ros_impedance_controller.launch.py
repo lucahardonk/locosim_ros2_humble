@@ -25,8 +25,9 @@ from launch.actions import (DeclareLaunchArgument, ExecuteProcess,
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
@@ -37,7 +38,6 @@ def generate_launch_description():
     rviz = LaunchConfiguration('rviz')
     gui = LaunchConfiguration('gui')
     task_period = LaunchConfiguration('task_period')
-    pid_discrete = LaunchConfiguration('pid_discrete_implementation')
 
     declared_args = [
         DeclareLaunchArgument('robot_name', default_value='go1'),
@@ -64,15 +64,17 @@ def generate_launch_description():
     else:
         os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path
 
-    world_path = PythonExpression(
-        ["'", os.path.join(pkg_ric, 'worlds', ''), "' + '", world_name, "'"])
+    # PathJoinSubstitution resolves world_name at runtime — avoids unresolved
+    # substitution objects leaking into ExecuteProcess.cmd.
+    world_path = PathJoinSubstitution([os.path.join(pkg_ric, 'worlds'), world_name])
 
-    # 1 - Upload the robot description (delegated to <robot>_description package)
+    # 1 - Upload the robot description (delegated to <robot>_description package).
+    #     FindPackageShare resolves the package name dynamically from robot_name.
     upload_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PythonExpression([
-                "__import__('ament_index_python.packages', fromlist=['get_package_share_directory'])"
-                ".get_package_share_directory('", robot_name, "_description') + '/launch/upload.launch.py'"
+            PathJoinSubstitution([
+                FindPackageShare([robot_name, '_description']),
+                'launch', 'upload.launch.py'
             ])
         ),
         launch_arguments={'task_period': task_period}.items(),
