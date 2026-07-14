@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'base_controller = robot_control.base_controller:main',
-            'quadruped_controller = robot_control.quadruped_controller:main',
+            'base_controller = base_controllers.base_controller:main',
+            'quadruped_controller = base_controllers.quadruped_controller:main',
         ],
     },
 )

@@ -33,18 +33,18 @@ import rclpy
 # utility functions
 ###W
 from  scipy.linalg import block_diag
-from robot_control.utils.pidManager import PidManager
-from robot_control.base_controller import BaseController
-from robot_control.utils.math_tools import *
+from base_controllers.utils.pidManager import PidManager
+from base_controllers.base_controller import BaseController
+from base_controllers.utils.math_tools import *
 
-from robot_control.components.whole_body_controller import WholeBodyController
-from robot_control.utils.common_functions import *
-from robot_control.components.inverse_kinematics.inv_kinematics_quadruped import InverseKinematics as AnalyticInverseKinematics
-from robot_control.components.inverse_kinematics.inv_kinematics_pinocchio import robotKinematics as PinocchioInverseKinematics
-from robot_control.components.leg_odometry.leg_odometry import LegOdometry
+from base_controllers.components.whole_body_controller import WholeBodyController
+from base_controllers.utils.common_functions import *
+from base_controllers.components.inverse_kinematics.inv_kinematics_quadruped import InverseKinematics as AnalyticInverseKinematics
+from base_controllers.components.inverse_kinematics.inv_kinematics_pinocchio import robotKinematics as PinocchioInverseKinematics
+from base_controllers.components.leg_odometry.leg_odometry import LegOdometry
 from termcolor import colored
 from std_msgs.msg import Float64MultiArray
-import robot_control.params as conf
+import base_controllers.params as conf
 
 from scipy.io import savemat
 
@@ -58,7 +58,7 @@ from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import Imu
 from ros_impedance_controller.msg import EffortPid
 
-from robot_control.components.imu_utils import IMU_utils
+from base_controllers.components.imu_utils import IMU_utils
 
 import datetime
 

@@ -23,7 +23,7 @@ from ament_index_python.packages import get_package_share_directory
 from std_srvs.srv import Trigger
 from ros_impedance_controller.srv import GenericFloat
 
-from robot_control.components.filter import SecondOrderFilter
+from base_controllers.components.filter import SecondOrderFilter
 
 
 class GripperManager():

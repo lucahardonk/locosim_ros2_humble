@@ -13,7 +13,7 @@ import math
 
 import sys
 sys.path.append('../utils')#allows to incude stuff on the same level
-from robot_control.utils.utils import Utils
+from base_controllers.utils.utils import Utils
 
 class robotKinematics():
     def __init__(self, robot, ee_frames):

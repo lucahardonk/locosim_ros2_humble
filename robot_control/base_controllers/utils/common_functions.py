@@ -32,8 +32,8 @@ from matplotlib.collections import PatchCollection
 from termcolor import colored
 import pinocchio
 
-from robot_control.utils.custom_robot_wrapper import RobotWrapper
-from robot_control.utils.utils import Utils
+from base_controllers.utils.custom_robot_wrapper import RobotWrapper
+from base_controllers.utils.utils import Utils
 
 # ROS2 python helpers
 try:

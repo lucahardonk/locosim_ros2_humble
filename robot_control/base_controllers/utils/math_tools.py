@@ -9,7 +9,7 @@ from __future__ import print_function
 import numpy as np
 import scipy as sp
 import math as math
-from robot_control.utils.utils import Utils
+from base_controllers.utils.utils import Utils
 
 class LineCoeff2d:
     def __init__(self):

@@ -2,8 +2,8 @@ import time
 
 import numpy as np
 import pinocchio as pin
-from robot_control.utils.utils import Utils
-from robot_control.utils.common_functions import getRobotModelFloating
+from base_controllers.utils.utils import Utils
+from base_controllers.utils.common_functions import getRobotModelFloating
 
 import scipy.optimize
 import scipy.linalg
@@ -294,7 +294,7 @@ class InverseKinematicsOptimization:
 
 
 if __name__ == '__main__':
-    from robot_control.components.inverse_kinematics.inv_kinematics_pinocchio import  robotKinematics
+    from base_controllers.components.inverse_kinematics.inv_kinematics_pinocchio import  robotKinematics
     # robot_name = 'solo'
     # qj = np.array([ 0.2,  np.pi / 4, -np.pi / 2,   # lf
     #                 0.2, -np.pi / 4,  np.pi / 2,   # lh

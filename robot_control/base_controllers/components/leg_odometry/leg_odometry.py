@@ -1,7 +1,7 @@
 import numpy as np
 import pinocchio as pin
 import time
-from robot_control.utils.utils import Utils
+from base_controllers.utils.utils import Utils
 
 class LegOdometry:
     def __init__(self, robot, real_robot = False):
@@ -122,7 +122,7 @@ class LegOdometry:
 
 
 if __name__ == '__main__':
-    from robot_control.utils.common_functions import getRobotModel
+    from base_controllers.utils.common_functions import getRobotModel
 
     robot = getRobotModel('solo')
     q0 = np.array([ 0., 0., 0.223,

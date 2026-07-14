@@ -25,7 +25,7 @@ from termcolor import colored
 from controller_manager_msgs.srv import SwitchController
 from controller_manager_msgs.srv import LoadController
 
-from robot_control.components.gripper_manager import GripperManager
+from base_controllers.components.gripper_manager import GripperManager
 
 
 class ControllerManager():

@@ -3,8 +3,8 @@
 # Author: Michele Focchi
 # Date: 23-10-2022
 import numpy as np
-from robot_control.utils.optimTools import quadprog_solve_qp
-from robot_control.utils.utils import Utils
+from base_controllers.utils.optimTools import quadprog_solve_qp
+from base_controllers.utils.utils import Utils
 from  scipy.linalg import block_diag
 import pinocchio as pin
 import time

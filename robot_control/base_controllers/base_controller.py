@@ -59,11 +59,11 @@ from std_srvs.srv import Empty
 
 from ros_impedance_controller.msg import EffortPid
 
-from robot_control.utils.ros_publish import RosPub
-from robot_control.utils.pidManager import PidManager
-from robot_control.utils.math_tools import *
-from robot_control.utils.common_functions import *
-import robot_control.params as conf
+from base_controllers.utils.ros_publish import RosPub
+from base_controllers.utils.pidManager import PidManager
+from base_controllers.utils.math_tools import *
+from base_controllers.utils.common_functions import *
+import base_controllers.params as conf
 
 np.set_printoptions(threshold=np.inf, precision=5, linewidth=1000, suppress=True)
 robotName = "solo"
