@@ -382,7 +382,7 @@ class BaseController(threading.Thread):
         req.max_update_rate = physics_props.max_update_rate
         req.ode_config = physics_props.ode_config
         req.gravity = physics_props.gravity
-        req.gravity.z = value
+        req.gravity.z = float(value)
         self._call_service(self.set_physics_client, req)
 
     def freezeBase(self, flag, basePoseW=None, baseTwistW=None):

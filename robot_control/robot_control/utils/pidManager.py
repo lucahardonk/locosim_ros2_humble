@@ -122,28 +122,31 @@ class PidManager:
         if isinstance(joint_idx, int):
             # fill in the message with des values for kp kd
             self.joint_pid.joint_name = self.joint_names[joint_idx]
-            self.joint_pid.p_value = kp
-            self.joint_pid.d_value = kd
-            self.joint_pid.i_value = ki
+            self.joint_pid.p_value = float(kp)
+            self.joint_pid.d_value = float(kd)
+            self.joint_pid.i_value = float(ki)
             self.joint_pid_log[joint_idx] = copy.deepcopy(self.joint_pid)
         else:
             for joint in joint_idx:
                 # fill in the message with des values for kp kd
                 self.joint_pid.joint_name = self.joint_names[joint]
+                # ROS2 rosidl messages strictly require native python float;
+                # numpy.float64 (what config gain arrays contain) is rejected
+                # with "The 'x_value' field must be of type 'float'". Cast.
                 if not isinstance(kp, np.ndarray):
-                    self.joint_pid.p_value = kp
+                    self.joint_pid.p_value = float(kp)
                 else:
-                    self.joint_pid.p_value = kp[joint]
+                    self.joint_pid.p_value = float(kp[joint])
 
                 if not isinstance(kd, np.ndarray):
-                    self.joint_pid.d_value = kd
+                    self.joint_pid.d_value = float(kd)
                 else:
-                    self.joint_pid.d_value = kd[joint]
+                    self.joint_pid.d_value = float(kd[joint])
 
                 if not isinstance(ki, np.ndarray):
-                    self.joint_pid.i_value = ki
+                    self.joint_pid.i_value = float(ki)
                 else:
-                    self.joint_pid.i_value = ki[joint]
+                    self.joint_pid.i_value = float(ki[joint])
 
                 self.joint_pid_log[joint] = copy.deepcopy(self.joint_pid)
 
@@ -162,9 +165,12 @@ class PidManager:
         for joint_idx in range(len(self.joint_names)):
             # fill in the message with des values for kp kd
             self.joint_pid.joint_name = self.joint_names[joint_idx]
-            self.joint_pid.p_value = kp[joint_idx]
-            self.joint_pid.d_value = kd[joint_idx]
-            self.joint_pid.i_value = ki[joint_idx]
+            # ROS2 rosidl messages strictly require native python float;
+            # numpy.float64 (config gain arrays) would raise
+            # "The 'x_value' field must be of type 'float'". Cast.
+            self.joint_pid.p_value = float(kp[joint_idx])
+            self.joint_pid.d_value = float(kd[joint_idx])
+            self.joint_pid.i_value = float(ki[joint_idx])
             self.joint_pid_log[joint_idx] = copy.deepcopy(self.joint_pid)
 
         self.req_msg.data = copy.deepcopy(self.joint_pid_log)
