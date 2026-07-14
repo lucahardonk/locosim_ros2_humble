@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>climbingrobot_description</name>
+  <version>0.0.1</version>
+  <description>Climbing robot (two-rope + propellers) description package (ROS2 Humble / Gazebo Classic)</description>
+
+  <license>BSD-3</license>
+  <author>ALPINE / locosim</author>
+  <maintainer email="luca.hardonk@example.com">lucahardonk</maintainer>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros2_control</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>ros_impedance_controller</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <!-- Let Gazebo Classic resolve package://climbingrobot_description/... mesh
+         URIs (meshes + ellipsoid used by the climbing wall). ${prefix} is the
+         install share dir of this package, so ${prefix}/.. is the dir that
+         CONTAINS climbingrobot_description, which is what package:// resolution
+         needs. Without this the robot spawns but its mesh visuals are invisible. -->
+    <gazebo_ros gazebo_model_path="${prefix}/.."/>
+  </export>
+</package>

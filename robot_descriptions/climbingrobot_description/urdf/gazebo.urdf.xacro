@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+  Gazebo Classic sensor/actuator plugins for climbingrobot2 (ROS2 Humble).
+
+  ROS1 -> ROS2 changes (ported from urdf/gazebo.urdf.xacro):
+    * libgazebo_ros_force.so : ROS1 used <bodyName>/<topicName>. The ROS2
+      (Gazebo Classic) GazeboRosForce plugin uses <link_name> and a <ros>
+      block; the default subscribed topic "gazebo_ros_force" is remapped to
+      the global "/base_force" (the topic the controller publishes propeller
+      Wrenches on). Force is applied in the world frame (as in ROS1, which
+      called Link::AddForce), matching prop_forceW computed by the controller.
+    * libgazebo_ros_bumper.so : ROS1 used <bumperTopicName>/<frameName>. The
+      ROS2 GazeboRosBumper plugin publishes gazebo_msgs/ContactsState on its
+      default topic "bumper_states", here remapped under the robot namespace to
+      "/climbingrobot2/foot_bumper" (the topic the controller subscribes to).
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="robot_name" default="climbingrobot2"/>
+
+  <!-- apply propeller force on the base (world frame) -->
+  <gazebo>
+    <plugin filename="libgazebo_ros_force.so" name="gazebo_ros_force">
+      <ros>
+        <remapping>gazebo_ros_force:=/base_force</remapping>
+      </ros>
+      <link_name>base_link</link_name>
+      <force_frame>world</force_frame>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="foot">
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <mu1>1.8</mu1>
+    <mu2>1.8</mu2>
+    <maxVel>1.0</maxVel>
+    <maxContacts>1</maxContacts>
+    <sensor name="foot_contact_sensor" type="contact">
+      <always_on>true</always_on>
+      <update_rate>1000.0</update_rate>
+      <contact>
+        <collision>lower_link_fixed_joint_lump__foot_collision_1</collision>
+      </contact>
+      <!-- the sensor readings in terms of force torques are expressed in the lowerleg frame
+           because gazebo lumps the fake foot frame with the real parent link, the normals are in the world frame-->
+      <plugin name="foot_bumper" filename="libgazebo_ros_bumper.so">
+        <ros>
+          <namespace>/$(arg robot_name)</namespace>
+          <remapping>bumper_states:=foot_bumper</remapping>
+        </ros>
+        <frame_name>foot</frame_name>
+      </plugin>
+    </sensor>
+    <material>Gazebo/Black</material>
+  </gazebo>
+</robot>

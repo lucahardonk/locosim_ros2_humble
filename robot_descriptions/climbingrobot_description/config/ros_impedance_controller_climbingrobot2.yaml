@@ -1,0 +1,81 @@
+# ros2_control configuration for the climbingrobot2 (two-rope + propellers).
+# Loaded by the gazebo_ros2_control plugin (see gazebo/gazebo.xacro), which
+# starts an embedded controller_manager.
+#
+# ROS1 -> ROS2 mapping (same as go1):
+#   * The ROS1 rosparam block "ros_impedance_controller: {type:..., joints:...,
+#     gains:...}" is split into the controller_manager section (declares the
+#     controller type + update_rate) and the per-controller ros__parameters
+#     section (joints / gains / home ...).
+#   * joint_state_controller/JointStateController -> joint_state_broadcaster.
+#
+# Gains are all zero (pure feed-forward / torque control) exactly as in the
+# ROS1 config; the controller writes torques (tau_ffwd) and the impedance PD is
+# provided by the ros_impedance_controller at runtime via setPDjoints.
+
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Hz (matches ROS1 task_period 0.001)
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    ros_impedance_controller:
+      type: ros_impedance_controller/Controller
+
+joint_state_broadcaster:
+  ros__parameters:
+    publish_rate: 1000
+
+ros_impedance_controller:
+  ros__parameters:
+    robot_name: climbingrobot2
+    pid_discrete_implementation: false
+    joints:
+      - mountain_wire_pitch_r
+      - mountain_wire_roll_r
+      - wire_base_prismatic_r
+      - wire_base_pitch_r
+      - wire_base_roll_r
+      - wire_base_yaw_r
+      - mountain_wire_pitch_l
+      - mountain_wire_roll_l
+      - wire_base_prismatic_l
+      - wire_base_pitch_l
+      - wire_base_roll_l
+      - wire_base_yaw_l
+      - hip_pitch
+      - hip_roll
+      - knee
+    gains:
+      mountain_wire_pitch_r: {p: 0.0, i: 0.0, d: 0.0}
+      mountain_wire_roll_r:  {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_prismatic_r: {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_pitch_r:     {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_roll_r:      {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_yaw_r:       {p: 0.0, i: 0.0, d: 0.0}
+      mountain_wire_pitch_l: {p: 0.0, i: 0.0, d: 0.0}
+      mountain_wire_roll_l:  {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_prismatic_l: {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_pitch_l:     {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_roll_l:      {p: 0.0, i: 0.0, d: 0.0}
+      wire_base_yaw_l:       {p: 0.0, i: 0.0, d: 0.0}
+      hip_pitch:             {p: 0.0, i: 0.0, d: 0.0}
+      hip_roll:              {p: 0.0, i: 0.0, d: 0.0}
+      knee:                  {p: 0.0, i: 0.0, d: 0.0}
+    home:
+      mountain_wire_pitch_r: 0.0
+      mountain_wire_roll_r:  0.0
+      wire_base_prismatic_r: 0.0
+      wire_base_pitch_r:     0.0
+      wire_base_roll_r:      0.0
+      wire_base_yaw_r:       0.0
+      mountain_wire_pitch_l: 0.0
+      mountain_wire_roll_l:  0.0
+      wire_base_prismatic_l: 0.0
+      wire_base_pitch_l:     0.0
+      wire_base_roll_l:      0.0
+      wire_base_yaw_l:       0.0
+      hip_pitch:             0.0
+      hip_roll:              0.0
+      knee:                  0.0

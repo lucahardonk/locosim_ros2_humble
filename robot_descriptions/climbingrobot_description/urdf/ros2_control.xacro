@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+  ros2_control hardware description for the climbingrobot2 (Gazebo Classic).
+
+  Replaces the ROS1 <transmission> blocks (climbingrobot2.transmission.xacro).
+  Every actuated joint exposes an "effort" command interface (the
+  ros_impedance_controller writes torques) and position/velocity/effort state
+  interfaces. The gazebo_ros2_control plugin (declared in gazebo/gazebo.xacro)
+  instantiates this hardware and starts an embedded controller_manager that
+  loads the controllers listed in
+  config/ros_impedance_controller_climbingrobot2.yaml.
+
+  The 15 actuated joints (2 ropes x 6 + 3 leg joints) are exactly the joints
+  that carried a transmission_interface/SimpleTransmission with an
+  EffortJointInterface in the ROS1 description.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="cr_effort_joint" params="name">
+    <joint name="${name}">
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- 15-DoF actuated set for climbingrobot2 -->
+  <xacro:macro name="climbingrobot2_ros2_control">
+    <ros2_control name="GazeboSystem" type="system">
+      <hardware>
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      </hardware>
+      <!-- left rope chain -->
+      <xacro:cr_effort_joint name="mountain_wire_pitch_l"/>
+      <xacro:cr_effort_joint name="mountain_wire_roll_l"/>
+      <xacro:cr_effort_joint name="wire_base_prismatic_l"/>
+      <xacro:cr_effort_joint name="wire_base_pitch_l"/>
+      <xacro:cr_effort_joint name="wire_base_roll_l"/>
+      <xacro:cr_effort_joint name="wire_base_yaw_l"/>
+      <!-- right rope chain -->
+      <xacro:cr_effort_joint name="mountain_wire_pitch_r"/>
+      <xacro:cr_effort_joint name="mountain_wire_roll_r"/>
+      <xacro:cr_effort_joint name="wire_base_prismatic_r"/>
+      <xacro:cr_effort_joint name="wire_base_pitch_r"/>
+      <xacro:cr_effort_joint name="wire_base_roll_r"/>
+      <xacro:cr_effort_joint name="wire_base_yaw_r"/>
+      <!-- leg -->
+      <xacro:cr_effort_joint name="hip_pitch"/>
+      <xacro:cr_effort_joint name="hip_roll"/>
+      <xacro:cr_effort_joint name="knee"/>
+    </ros2_control>
+  </xacro:macro>
+
+</robot>
