@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!--
+  Gazebo Classic (gazebo11) + ros2_control description for Go2.
+
+  ROS1 -> ROS2 changes:
+    * libgazebo_ros_control.so  ->  libgazebo_ros2_control.so
+      (robotNamespace/robotSimType/legacyModeNS removed; the plugin now takes
+       a <parameters> tag pointing at the controller_manager YAML).
+    * libgazebo_ros_p3d.so (ground truth) kept — still shipped by gazebo_ros in
+      ROS2 (Gazebo Classic). Uses <ros><namespace>/<remapping> syntax.
+    * libgazebo_ros_imu_sensor.so kept — from gazebo_plugins (Gazebo Classic).
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="task_period" default="0.004"/>
+  <xacro:arg name="robot_name" default="go2"/>
+
+  <!-- ros2_control system + embedded controller_manager -->
+  <gazebo>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <parameters>$(find go2_description)/config/ros_impedance_controller.yaml</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+    </plugin>
+  </gazebo>
+
+  <!-- Ground-truth pose of the trunk (Gazebo Classic P3D plugin) -->
+  <gazebo>
+    <plugin filename="libgazebo_ros_p3d.so" name="gazebo_ros_p3d">
+      <ros>
+        <namespace>/$(arg robot_name)</namespace>
+        <remapping>odom:=ground_truth</remapping>
+      </ros>
+      <body_name>base_link</body_name>
+      <frame_name>world</frame_name>
+      <xyz_offset>0 0 0</xyz_offset>
+      <rpy_offset>0 0 0</rpy_offset>
+      <gaussian_noise>0</gaussian_noise>
+      <update_rate>${1/ $(arg task_period)}</update_rate>
+    </plugin>
+  </gazebo>
+
+  <!-- IMU (Gazebo Classic sensor + ROS2 imu plugin) -->
+  <gazebo reference="imu_link">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>${1/ $(arg task_period)}</update_rate>
+      <visualize>true</visualize>
+      <imu>
+        <linear_acceleration>
+          <x><noise type="gaussian"><mean>0.0</mean><stddev>0.00001</stddev><bias_mean>0.0</bias_mean><bias_stddev>0</bias_stddev></noise></x>
+          <y><noise type="gaussian"><mean>0.0</mean><stddev>0.00001</stddev><bias_mean>0.0</bias_mean><bias_stddev>0</bias_stddev></noise></y>
+          <z><noise type="gaussian"><mean>0.0</mean><stddev>0.00001</stddev><bias_mean>0.0</bias_mean><bias_stddev>0.0</bias_stddev></noise></z>
+        </linear_acceleration>
+      </imu>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <ros>
+          <namespace>/$(arg robot_name)</namespace>
+          <remapping>~/out:=trunk_imu</remapping>
+        </ros>
+        <frame_name>imu_link</frame_name>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+</robot>

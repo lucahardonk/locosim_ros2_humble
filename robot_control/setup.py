@@ -21,7 +21,9 @@ setup(
     entry_points={
         'console_scripts': [
             'base_controller = base_controllers.base_controller:main',
+            'base_controller_fixed = base_controllers.base_controller_fixed:main',
             'quadruped_controller = base_controllers.quadruped_controller:main',
+            'climbingrobot_controller = base_controllers.climbingrobot_controller.climbingrobot_controller:main',
         ],
     },
 )
