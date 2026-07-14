@@ -341,6 +341,10 @@ class ClimbingrobotController(BaseControllerFixed):
 
     def _receive_contact(self, msg):
         self.contactForceW = np.zeros(3)
+        # ContactsState arrives with an empty states list when there is no
+        # contact this step; guard against IndexError before dereferencing.
+        if len(msg.states) == 0 or len(msg.states[0].wrenches) == 0:
+            return
         grf = np.zeros(3)
         grf[0] = msg.states[0].wrenches[0].force.x
         grf[1] = msg.states[0].wrenches[0].force.y
@@ -349,6 +353,8 @@ class ClimbingrobotController(BaseControllerFixed):
 
     def _receive_contact_landing_l(self, msg):
         self.contactForceW_l = np.zeros(3)
+        if len(msg.states) == 0 or len(msg.states[0].wrenches) == 0:
+            return
         grf = np.zeros(3)
         grf[0] = msg.states[0].wrenches[0].force.x
         grf[1] = msg.states[0].wrenches[0].force.y
@@ -357,6 +363,8 @@ class ClimbingrobotController(BaseControllerFixed):
 
     def _receive_contact_landing_r(self, msg):
         self.contactForceW_r = np.zeros(3)
+        if len(msg.states) == 0 or len(msg.states[0].wrenches) == 0:
+            return
         grf = np.zeros(3)
         grf[0] = msg.states[0].wrenches[0].force.x
         grf[1] = msg.states[0].wrenches[0].force.y
