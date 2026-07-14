@@ -18,8 +18,8 @@
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 
 // realtime tools
-#include <realtime_tools/realtime_buffer.h>
-#include <realtime_tools/realtime_publisher.h>
+#include <realtime_tools/realtime_buffer.hpp>
+#include <realtime_tools/realtime_publisher.hpp>
 
 // Eigen
 #include <Eigen/Dense>
